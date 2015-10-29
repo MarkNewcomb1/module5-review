@@ -10,6 +10,7 @@ class User{
   private $_pass;
   private $_mail;
   private $_created;
+  private $_role;
 
   public function getUID(){return $this->_uid;}
   public function setUID($arg){$this->_uid = $arg;}
@@ -26,12 +27,23 @@ class User{
   public function getCreated(){return $this->_created;}
   public function setCreated($arg){$this->_created = $arg;}        
   
+  public function getRole(){return $this->_role;}
+  public function setRole($arg){$this->_role = $arg;}  
+  
+  public function isAdmin(){
+    if ($this->_role == 1) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+    
   public function hydrate($arr) {
     $this->setUID(isset($arr["uid"])?$arr["uid"]:'');
     $this->setName(isset($arr["name"])?$arr["name"]:'');
     $this->setPassword(isset($arr["pass"])?$arr["pass"]:'');
     $this->setMail(isset($arr["mail"])?$arr["mail"]:'');
     $this->setCreated(isset($arr["created"])?$arr["created"]:'');
+    $this->setRole(isset($arr["role"])?$arr["role"]:'');
   }
   
 }

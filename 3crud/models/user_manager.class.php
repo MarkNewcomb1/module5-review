@@ -1,7 +1,46 @@
 <?php 
 
 class UserManager extends Manager{
-	
+
+  public function authenticate($username, $password){
+        
+      $db = new Db();
+    
+      $username = $db -> quote($username);
+      $results = $db -> select("SELECT * from users where name = $username limit 1");
+      
+      if(!$results){
+        return FALSE;
+      }
+      
+      foreach($results as $result){
+        $user = new User();
+        $user->hydrate($result);
+      }
+      
+      
+      if(password_verify($password, $user->getPassword())){
+        return $user;
+      } else {
+        return FALSE;
+      }     
+      
+      
+     //return $user;
+    
+  }
+  
+  public function getAllRoles(){
+    
+      $db = new Db();
+      $roles = array();
+          
+      $roles = $db -> select("SELECT * from roles order by sort_order asc");
+            
+      return $roles;    
+      
+  }
+    	
   public function getUser($arg){
     
     if(!is_numeric($arg)) return FALSE;
@@ -49,10 +88,14 @@ class UserManager extends Manager{
     
     $name = $db -> quote($user->getName());
     $mail = $db -> quote($user->getMail());
-    $pass = $db -> quote($user->getPassword());
+    $pass = password_hash($user->getPassword(), PASSWORD_BCRYPT, array("cost" => 10));
+    $pass = $db -> quote($pass);
+    //$pass = $db -> quote($user->getPassword());
+    $role = $db -> quote($user->getRole());
     $created = time();
     
-    $results = $db -> query("insert into users (name, pass, mail, created) values ($name, $pass, $mail, $created);");
+    
+    $results = $db -> query("insert into users (name, pass, mail, created, role) values ($name, $pass, $mail, $created, $role);");
 
   }
   
@@ -62,17 +105,20 @@ class UserManager extends Manager{
     $uid = $db -> quote($user->getUID());
     $name = $db -> quote($user->getName());
     $mail = $db -> quote($user->getMail());
+    $role = $db -> quote($user->getRole());
     
     if($user->getPassword()){
-      $pass = $db -> quote($user->getPassword());
+      $pass = password_hash($user->getPassword(), PASSWORD_BCRYPT, array("cost" => 10));
+      $pass = $db -> quote($pass);
+      //$pass = $db -> quote($user->getPassword());
     } else {
       $pass = '';
     }
 
     if(!empty($pass)){
-      $results = $db -> query("update users set name=$name, pass=$pass, mail=$mail where uid = $uid;");  
+      $results = $db -> query("update users set name=$name, pass=$pass, mail=$mail, role=$role where uid = $uid;");  
     } else {
-      $results = $db -> query("update users set name=$name, mail=$mail where uid = $uid;");
+      $results = $db -> query("update users set name=$name, mail=$mail, role=$role where uid = $uid;");
     }
 
   }

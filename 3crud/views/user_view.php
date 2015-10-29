@@ -1,4 +1,8 @@
-
+<?php
+  if($user->isAdmin()){
+    echo "<div style='color:red'>Administrator</div>";
+  }
+?>
 <ul>
   <li><?= $user->getUID() ?></li>
   <li><?= $user->getName() ?></li>
