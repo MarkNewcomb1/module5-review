@@ -1,3 +1,22 @@
+<?php    
+  require_once('../lib/db.interface.php');
+  require_once('../lib/db.class.php');
+  require_once('../models/user.class.php');
+  require_once('../models/manager.abstract.php');
+  require_once('../models/user_manager.class.php');
+  // Uncomment the below line (and line in login.php) to enable db session store 
+  //require_once('../lib/db_session_store.php'); 
+  
+  session_start();
+     
+  if(!isset($_SESSION['current_user'])){
+    header('Location: login.php');
+  }else{
+    $current_user = $_SESSION['current_user'];
+  }
+
+   
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,12 +26,8 @@
   <body>
     <h2>User Administration</h2>
     <?php
-      require_once('../lib/db.interface.php');
-      require_once('../lib/db.class.php');
-      require_once('../models/user.class.php');
-      require_once('../models/manager.abstract.php');
-      require_once('../models/user_manager.class.php'); 
-      
+ 
+      print "Hi " . $current_user->getName();   
 
       $action = isset($_GET["action"])?$_GET["action"]:'';
       $target = isset($_GET["target"])?$_GET["target"]:'';
@@ -33,13 +48,16 @@
           
         case 'add_user':
           $userManager = new UserManager();
+          $roles = $userManager->getAllRoles();
           $user = new User();
+          echo "hey";
           include('../views/user_add_edit.php');
           break;         
           
         case 'edit_user':
           $userManager = new UserManager();
           $user = $userManager->getUser($target);
+          $roles = $userManager->getAllRoles();
           include('../views/user_add_edit.php');
           break;          
           
@@ -50,6 +68,7 @@
           $arr["name"] = isset($_GET["name"])?$_GET["name"]:'';
           $arr["mail"] = isset($_GET["mail"])?$_GET["mail"]:'';
           $arr["pass"] = isset($_GET["pass"])?$_GET["pass"]:'';
+          $arr["role"] = isset($_GET["role"])?$_GET["role"]:'';
           $user = new User();
           $user->hydrate($arr);
           $userManager->save($user);
