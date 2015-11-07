@@ -77,27 +77,7 @@ class userTest extends PHPUnit_Framework_TestCase{
         $this->assertSame($role, $u->getRole(), 'Hydrate/Getter Failure: User:Role');
 
     }  
-    
-        /* Set a valid email address, and check to make sure the property is set */
-    testEmailSetAndGet(){
-	    	$email_a = 'joe@example.com';
-			$email_b = 'bogus';
-
-	if (filter_var($email_a, FILTER_VALIDATE_EMAIL)) {
-    	echo "This ($email_a) email address is considered valid.";
-    	$_POST['email'] = '';
-		}
-    }
-    
-    /* Set an invalid email address, and check to make sure the property is blank */
-testEmailIsInvalid(){
-
-if (filter_var($email_b, FILTER_VALIDATE_EMAIL)) {
-   	 echo "This ($email_b) email address is considered valid.";
-   	 $_POST['email'] = '';
-	}
-	
-	}      
+     
 }
 
 ?>
